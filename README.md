@@ -22,7 +22,14 @@
 Установите и запустите Elasticsearch, после чего поменяйте параметр cluster_name на случайный. 
 
 *Приведите скриншот команды 'curl -X GET 'localhost:9200/_cluster/health?pretty', сделанной на сервере с установленным Elasticsearch. Где будет виден нестандартный cluster_name*.
-
+sudo apt update && sudo apt install gnupg apt-transport-https
+#Доступ к ресурсам elastic.co из РФ заблокирован.
+#Пакет скачал через web browser (proxy-addon) по адресу: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.6.2-amd64.deb
+sudo apt install /home/qshar/elastic/elasticsearch-8.8.1-amd64.deb
+sudo systemctl daemon-reload
+sudo systemctl status elasticsearch.service
+sudo systemctl enable elasticsearch.service
+sudo sysctl vm.swappiness=1 #или выключаем подкачку: sudo swapoff -a
 ---
 
 ### Задание 2. Kibana
