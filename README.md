@@ -32,7 +32,7 @@ sudo systemctl status elasticsearch.service
 sudo systemctl enable elasticsearch.service
 sudo sysctl vm.swappiness=1 #или выключаем подкачку: sudo swapoff -a
 
-sudo nano /etc/elasticsearch/elasticsearch.yml # cluster.name: clusterBaranovskiiSN и network.host: localhost
+sudo nano /etc/elasticsearch/elasticsearch.yml # cluster.name: clusterGribanovAV и network.host: localhost
 sudo systemctl start elasticsearch.service
 curl -X GET 'localhost:9200/_cluster/health?pretty'
 curl -X GET 'localhost:9200/_cat/master?pretty'
