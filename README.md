@@ -38,6 +38,9 @@ curl -X GET 'localhost:9200/_cluster/health?pretty'
 curl -X GET 'localhost:9200/_cat/master?pretty'
 curl -X GET 'http://localhost:9200'
 ```
+ ![sdb_001](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_001.png)
+ ![sdb_001](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_001.png)
+
 ---
 
 ### Задание 2. Kibana
