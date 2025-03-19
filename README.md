@@ -49,6 +49,17 @@ curl -X GET 'http://localhost:9200'
 
 *Приведите скриншот интерфейса Kibana на странице http://<ip вашего сервера>:5601/app/dev_tools#/console, где будет выполнен запрос GET /_cluster/health?pretty*.
 
+```bash
+sudo apt install /tmp/kibana-7.17.9-amd64.deb
+sudo systemctl daemon-reload
+sudo systemctl status logstash.service
+sudo systemctl enable logstash.service
+sudo systemctl start logstash.service
+
+sudo nano /etc/kibana/kibana.yml # server.host: "localhost"  и  server.port: 5601
+
+http://localhost:5601/app/dev_tools#/console
+```
 ---
 
 ### Задание 3. Logstash
