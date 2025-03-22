@@ -38,8 +38,8 @@ curl -X GET 'localhost:9200/_cluster/health?pretty'
 curl -X GET 'localhost:9200/_cat/master?pretty'
 curl -X GET 'http://localhost:9200'
 ```
- ![sdb_001](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_001.png)
- ![sdb_001](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_002.png)
+ ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_001.png)
+ ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_002.png)
 
 ---
 
@@ -60,6 +60,9 @@ sudo nano /etc/kibana/kibana.yml # server.host: "localhost"  и  server.port: 56
 
 http://localhost:5601/app/dev_tools#/console
 ```
+
+ ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_003.png)
+ 
 ---
 
 ### Задание 3. Logstash
@@ -67,7 +70,9 @@ http://localhost:5601/app/dev_tools#/console
 Установите и запустите Logstash и Nginx. С помощью Logstash отправьте access-лог Nginx в Elasticsearch. 
 
 *Приведите скриншот интерфейса Kibana, на котором видны логи Nginx.*
-
+ 
+ ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_004.png)
+ 
 ---
 
 ### Задание 4. Filebeat. 
