@@ -135,6 +135,6 @@ output {
     index => "logstash-logs-%{+YYYY.MM}"
   }
 }
-
+```
  ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_005.png)
 
