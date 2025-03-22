@@ -23,17 +23,31 @@
 
 *Приведите скриншот команды 'curl -X GET 'localhost:9200/_cluster/health?pretty', сделанной на сервере с установленным Elasticsearch. Где будет виден нестандартный cluster_name*.
 ```bash
-sudo apt update && sudo apt install gnupg apt-transport-https
-#Доступ к ресурсам elastic.co из РФ заблокирован.
-#Пакет скачал через web browser (proxy-addon) по адресу: [(https://mirrors.huaweicloud.com/elasticsearch/8.8.1/)]
-sudo apt install /home/qshar/elastic/elasticsearch-8.8.1-amd64.deb
-sudo systemctl daemon-reload
-sudo systemctl status elasticsearch.service
-sudo systemctl enable elasticsearch.service
-sudo sysctl vm.swappiness=1 #или выключаем подкачку: sudo swapoff -a
+elasticsearch:
+    image: elasticsearch:8.12.2
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+#      - cluster.name=docker-cluster
+#      - bootstrap.memory_lock=true
+#      - xpack.security.enabled=false
+#      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
 
-sudo nano /etc/elasticsearch/elasticsearch.yml # cluster.name: clusterGribanovAV и network.host: localhost
-sudo systemctl start elasticsearch.service
+
 curl -X GET 'localhost:9200/_cluster/health?pretty'
 curl -X GET 'localhost:9200/_cat/master?pretty'
 curl -X GET 'http://localhost:9200'
@@ -50,13 +64,18 @@ curl -X GET 'http://localhost:9200'
 *Приведите скриншот интерфейса Kibana на странице http://<ip вашего сервера>:5601/app/dev_tools#/console, где будет выполнен запрос GET /_cluster/health?pretty*.
 
 ```bash
-sudo apt install /tmp/kibana-7.17.9-amd64.deb
-sudo systemctl daemon-reload
-sudo systemctl status logstash.service
-sudo systemctl enable logstash.service
-sudo systemctl start logstash.service
 
-sudo nano /etc/kibana/kibana.yml # server.host: "localhost"  и  server.port: 5601
+kibana:
+    container_name: kibana
+    image: kibana:8.12.2
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+      - nginx
+
 
 http://localhost:5601/app/dev_tools#/console
 ```
@@ -70,7 +89,23 @@ http://localhost:5601/app/dev_tools#/console
 Установите и запустите Logstash и Nginx. С помощью Logstash отправьте access-лог Nginx в Elasticsearch. 
 
 *Приведите скриншот интерфейса Kibana, на котором видны логи Nginx.*
- 
+
+ ```bash
+logstash:
+    image: logstash:8.12.2
+    environment:
+      # Так как сейчас вы хотите запустить logstash без Elasticsearch, 
+      # необходимо отключить встроенный мониторинг, отправляющий данные в ES
+      ES_HOST: "elasticsearch:9200"
+    ports:
+      - "5044:5044/udp"
+    volumes:
+      - ./configs/logstash/config.yml:/usr/share/logstash/config/logstash.yml
+      - ./configs/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./configs/logstash/pipelines:/usr/share/logstash/config/pipelines
+    depends_on:
+          - elasticsearch
+ ```
  ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_004.png)
  
 ---
@@ -80,6 +115,26 @@ http://localhost:5601/app/dev_tools#/console
 Установите и запустите Filebeat. Переключите поставку логов Nginx с Logstash на Filebeat. 
 
 *Приведите скриншот интерфейса Kibana, на котором видны логи Nginx, которые были отправлены через Filebeat.*
+
+```bash
+input {
+  beats {
+    port => 5044
+  }
+}
+filter {
+  grok {
+    match => { "message" => "\[%{TIMESTAMP_ISO8601:timestamp}\]\[%{DATA:severity}%{SPACE}\]\[%{DATA:source}%{SPACE}\]%{SPACE}%{GREEDYDATA:message}" }
+    overwrite => [ "message" ]
+  }
+}
+output {
+  elasticsearch {
+    hosts => "localhost:9200"
+    data_stream => "true"
+    index => "logstash-logs-%{+YYYY.MM}"
+  }
+}
 
  ![sdb_003](https://github.com/Qshar1408/sdb_03/blob/main/img/sdb_03_005.png)
 
